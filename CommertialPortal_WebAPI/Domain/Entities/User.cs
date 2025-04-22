@@ -7,6 +7,7 @@ public class User : IdentityUser
 {
     public BusinessProfile? BusinessProfile { get; set; }
     public ClientProfile? ClientProfile { get; set; }
+
     public UserType? UserType { get; private set; }
 
     public static Result<User> Create(string email)

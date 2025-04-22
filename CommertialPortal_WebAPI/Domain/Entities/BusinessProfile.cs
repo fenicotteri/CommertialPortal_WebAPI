@@ -11,6 +11,7 @@ public class BusinessProfile
     public string CompanyName { get; set; } = string.Empty;
     public ICollection<Post> Posts { get; set; } = new List<Post>();
     public List<BusinessBranch> Branches { get; set; } = new();
+
     public static BusinessProfile Create(string userId, string companyName)
     {
         return new BusinessProfile

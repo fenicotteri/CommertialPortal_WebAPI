@@ -1,4 +1,5 @@
-﻿using CommertialPortal_WebAPI.Domain.Entities;
+﻿using System.Reflection.Emit;
+using CommertialPortal_WebAPI.Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<BusinessBranch> BusinessBranches { get; set; }
     public DbSet<ClientProfile> ClientProfiles { get; set; }
     public DbSet<BusinessProfile> BusinessProfiles { get; set; }
+    public DbSet<ClientSubscription> ClientSubscriptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -33,10 +35,24 @@ public class DataContext : IdentityDbContext<User>
             .HasMany(cp => cp.FavouritePosts)
             .WithMany();
 
+        builder.Entity<BusinessProfile>()
+        .HasOne(bp => bp.User)
+        .WithOne(u => u.BusinessProfile)
+        .HasForeignKey<BusinessProfile>(bp => bp.UserId)
+        .IsRequired()
+        .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<ClientProfile>()
+            .HasOne(cp => cp.User)
+            .WithOne(u => u.ClientProfile)
+            .HasForeignKey<ClientProfile>(cp => cp.UserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Entity<BusinessBranch>()
             .HasOne(bb => bb.BusinessProfile)
             .WithMany(bp => bp.Branches)
-            .HasForeignKey(bb => bb.BusinessProfileId) // Используйте свойство внешнего ключа, а не сам объект
+            .HasForeignKey(bb => bb.BusinessProfileId)
             .OnDelete(DeleteBehavior.Cascade);
 
 
@@ -59,6 +75,23 @@ public class DataContext : IdentityDbContext<User>
             .WithMany(bb => bb.PostBranches)
             .HasForeignKey(pt => pt.BusinessBranchId);
 
+        builder.Entity<ClientSubscription>(entity =>
+        {
+            entity.HasKey(cs => cs.Id);
+
+            entity.HasOne(cs => cs.ClientProfile)
+                .WithMany(cp => cp.Subscriptions)
+                .HasForeignKey(cs => cs.ClientProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(cs => cs.BusinessProfile)
+                .WithMany() 
+                .HasForeignKey(cs => cs.BusinessProfileId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            entity.HasIndex(cs => new { cs.ClientProfileId, cs.BusinessProfileId }).IsUnique();
+        });
+        
     }
 }
 

@@ -12,6 +12,8 @@ public class ClientProfile
     public string LastName { get; set; } = string.Empty;
     public ICollection<Post> FavouritePosts { get; set; } = new List<Post>();
 
+    public List<ClientSubscription> Subscriptions { get; set; } = new();
+
     public static ClientProfile Create(string userId, string firstName, string lastName)
     {
         return new ClientProfile

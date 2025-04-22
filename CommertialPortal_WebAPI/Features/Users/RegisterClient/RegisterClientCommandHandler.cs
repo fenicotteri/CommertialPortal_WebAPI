@@ -34,7 +34,7 @@ public class RegisterClientCommandHandler : IRequestHandler<RegisterClientComman
         if (profileResult.IsFailure)
             return Result.Failure<RegisterClientResponse>(profileResult.Error);
 
-        var createResult = await _userManager.CreateAsync(user);
+        var createResult = await _userManager.CreateAsync(user, request.Password);
         if (!createResult.Succeeded)
         {
             var errors = string.Join("; ", createResult.Errors.Select(e => e.Description));

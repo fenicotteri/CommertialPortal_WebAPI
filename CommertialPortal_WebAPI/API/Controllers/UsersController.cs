@@ -2,6 +2,7 @@
 using CommertialPortal_WebAPI.Features.Users.LoginUser;
 using CommertialPortal_WebAPI.Features.Users.RegisterBusiness;
 using CommertialPortal_WebAPI.Features.Users.RegisterClient;
+using CommertialPortal_WebAPI.Features.Users.SubscribeToBusiness;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -97,4 +98,25 @@ public class UsersController : ControllerBase
 
         return Ok(result.Value);
     }
+
+    /// <summary>
+    /// Подписка клиента на выбранный бизнес.
+    /// </summary>
+    /// <param name="command">Данные о бизнесе для подписки (идентификатор бизнес-профиля).</param>
+    /// <returns>Результат операции подписки.</returns>
+    /// <response code="200">Подписка успешно оформлена.</response>
+    /// <response code="400">Ошибка запроса: бизнес-профиль не найден или клиент уже подписан.</response>
+    /// <response code="401">Пользователь не авторизован.</response>
+    [HttpPost("subscribe")]
+    [Authorize(Roles = AuthRoles.Client)]
+    public async Task<IActionResult> SubscribeToBusiness([FromBody] SubscribeToBusinessCommand command)
+    {
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+            return BadRequest(ApiResponse<string>.FailureResponse(result.Error));
+
+        return Ok(ApiResponse<string>.SuccessResponse("Successfully subscribed."));
+    }
+
 }
