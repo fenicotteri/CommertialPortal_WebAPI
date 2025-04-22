@@ -19,7 +19,43 @@ public class Post
     public List<PostBusinessBranch> PostBranches { get; set; } = new();
 
     public DiscountInfo? Discount { get; set; }
+
+    public static Post Create(
+        string title,
+        string content,
+        PostType type,
+        string? imageUrl,
+        DateTime startDate,
+        DateTime? endDate,
+        int businessProfileId,
+        List<int> branchIds,
+        DiscountInfo? discount = null)
+    {
+        var post = new Post
+        {
+            Title = title,
+            Content = content,
+            Type = type,
+            ImageUrl = imageUrl,
+            StartDate = startDate.ToUniversalTime(),
+            EndDate = endDate?.ToUniversalTime(),
+            CreatedAt = DateTime.UtcNow,
+            BusinessProfileId = businessProfileId,
+            Discount = discount
+        };
+
+        post.PostBranches = branchIds
+        .Select(branchId => new PostBusinessBranch
+        {
+            BusinessBranchId = branchId,
+            Post = post 
+        })
+        .ToList();
+
+        return post;
+    }
 }
+
 
 public class DiscountInfo
 {
@@ -27,6 +63,16 @@ public class DiscountInfo
     public double? Percentage { get; set; }
     public decimal? Amount { get; set; }
     public string? Code { get; set; }
+
+    public static DiscountInfo Create(double? percentage, decimal? amount, string? code)
+    {
+        return new DiscountInfo
+        {
+            Percentage = percentage,
+            Amount = amount,
+            Code = code
+        };
+    }
 }
 
 

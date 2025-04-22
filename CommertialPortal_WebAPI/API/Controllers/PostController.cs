@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using CommertialPortal_WebAPI.Features.Posts.CreateBranch;
+using CommertialPortal_WebAPI.Features.Posts.CreatePost;
 using CommertialPortal_WebAPI.Features.Users.RegisterBusiness;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -26,5 +27,21 @@ public class PostController : ControllerBase
             return BadRequest(result.Error);
 
         return Ok(result.Value);
+    }
+
+    /// <summary>
+    /// Создание нового поста (акция, событие, скидка).
+    /// </summary>
+    /// <param name="command">Данные поста.</param>
+    /// <returns>Идентификатор созданного поста.</returns>
+    [HttpPost("create")]
+    [Authorize(Roles = AuthRoles.Business)]
+    [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> CreatePost([FromBody] CreatePostCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return Ok(result);
     }
 }
