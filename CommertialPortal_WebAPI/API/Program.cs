@@ -13,6 +13,7 @@ using CommertialPortal_WebAPI.Infrastructure.Data;
 using CommertialPortal_WebAPI.Infrastructure.Servises;
 using Microsoft.Extensions.Options;
 using CommertialPortal_WebAPI;
+using CommertialPortal_WebAPI.Features.YandexGpt;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,6 +106,8 @@ builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email
 builder.Services.AddTransient<IEmailService, EmailService>();
 var emailSettings = builder.Configuration.GetSection("EmailSettings").Get<EmailOptions>();
 Console.WriteLine(emailSettings.EmailId);
+
+builder.Services.AddHttpClient<IYandexGptService, YandexGptService>();
 
 var app = builder.Build();
 
