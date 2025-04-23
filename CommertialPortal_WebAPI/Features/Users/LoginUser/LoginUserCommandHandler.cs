@@ -11,10 +11,10 @@ namespace CommertialPortal_WebAPI.Features.Users.LoginUser;
 public class LoginUserHandler : IRequestHandler<LoginUserCommand, Result<LoginUserResponse>>
 {
     private readonly UserManager<User> _userManager;
-    private readonly ITokenServise _tokenServise;
+    private readonly ITokenService _tokenServise;
     private readonly DataContext _dataContext;
 
-    public LoginUserHandler(UserManager<User> userManager, ITokenServise tokenServise, DataContext dataContext)
+    public LoginUserHandler(UserManager<User> userManager, ITokenService tokenServise, DataContext dataContext)
     {
         _userManager = userManager;
         _tokenServise = tokenServise;

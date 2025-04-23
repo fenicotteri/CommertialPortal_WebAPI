@@ -35,20 +35,6 @@ public class DataContext : IdentityDbContext<User>
             .HasMany(cp => cp.FavouritePosts)
             .WithMany();
 
-        builder.Entity<BusinessProfile>()
-        .HasOne(bp => bp.User)
-        .WithOne(u => u.BusinessProfile)
-        .HasForeignKey<BusinessProfile>(bp => bp.UserId)
-        .IsRequired()
-        .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Entity<ClientProfile>()
-            .HasOne(cp => cp.User)
-            .WithOne(u => u.ClientProfile)
-            .HasForeignKey<ClientProfile>(cp => cp.UserId)
-            .IsRequired()
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.Entity<BusinessBranch>()
             .HasOne(bb => bb.BusinessProfile)
             .WithMany(bp => bp.Branches)

@@ -8,11 +8,11 @@ using CommertialPortal_WebAPI.Application.Interfaces;
 using CommertialPortal_WebAPI.Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
 
-public class TokenServise : ITokenServise
+public class TokenService : ITokenService
 {
     private readonly IConfiguration _config;
     private readonly SymmetricSecurityKey _key;
-    public TokenServise(IConfiguration config)
+    public TokenService(IConfiguration config)
     {
         _config = config;
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]!));

@@ -12,6 +12,7 @@ using CommertialPortal_WebAPI.Application.Interfaces;
 using CommertialPortal_WebAPI.Infrastructure.Data;
 using CommertialPortal_WebAPI.Infrastructure.Servises;
 using Microsoft.Extensions.Options;
+using CommertialPortal_WebAPI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<ITokenServise, TokenServise>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -99,6 +100,11 @@ builder.Services.AddMediatR(cfg =>
 
 builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
 builder.Services.AddFluentValidationAutoValidation();
+
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<IEmailService, EmailService>();
+var emailSettings = builder.Configuration.GetSection("EmailSettings").Get<EmailOptions>();
+Console.WriteLine(emailSettings.EmailId);
 
 var app = builder.Build();
 

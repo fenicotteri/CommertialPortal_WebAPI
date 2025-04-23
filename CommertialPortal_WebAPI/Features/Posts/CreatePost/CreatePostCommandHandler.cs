@@ -4,6 +4,7 @@ using System.Security.Claims;
 using NuGet.Protocol.Plugins;
 using MediatR;
 using CommertialPortal_WebAPI.Infrastructure.Data;
+using CommertialPortal_WebAPI.Features.Posts.NewPostCreatedEvent;
 
 namespace CommertialPortal_WebAPI.Features.Posts.CreatePost;
 
@@ -11,11 +12,13 @@ public sealed class CreatePostCommandHandler : IRequestHandler<CreatePostCommand
 {
     private readonly DataContext _dbContext;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IMediator _mediator;
 
-    public CreatePostCommandHandler(DataContext dbContext, IHttpContextAccessor httpContextAccessor)
+    public CreatePostCommandHandler(DataContext dbContext, IHttpContextAccessor httpContextAccessor, IMediator mediator)
     {
         _dbContext = dbContext;
         _httpContextAccessor = httpContextAccessor;
+        _mediator = mediator;
     }
     public async Task<int> Handle(CreatePostCommand request, CancellationToken cancellationToken)
     {
@@ -54,6 +57,8 @@ public sealed class CreatePostCommandHandler : IRequestHandler<CreatePostCommand
 
         _dbContext.Posts.Add(post);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        await _mediator.Publish(new PostCreatedEvent(post.Id, businessProfile.Id), cancellationToken);
 
         return post.Id;
     }

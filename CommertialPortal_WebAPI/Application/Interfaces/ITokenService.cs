@@ -2,7 +2,7 @@
 
 namespace CommertialPortal_WebAPI.Application.Interfaces;
 
-public interface ITokenServise
+public interface ITokenService
 {
     string CreateToken(User user);
 }

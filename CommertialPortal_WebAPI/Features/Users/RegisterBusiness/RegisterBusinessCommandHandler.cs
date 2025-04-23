@@ -8,10 +8,10 @@ namespace CommertialPortal_WebAPI.Features.Users.RegisterBusiness;
 
 public class RegisterUserHandler : IRequestHandler<RegisterBusinessCommand, Result<RegisterBusinessResponse>>
 {
-    private readonly ITokenServise _tokenServise;
+    private readonly ITokenService _tokenServise;
     private readonly UserManager<User> _userManager;
 
-    public RegisterUserHandler(ITokenServise tokenServise, UserManager<User> userManager)
+    public RegisterUserHandler(ITokenService tokenServise, UserManager<User> userManager)
     {
         _tokenServise = tokenServise;
         _userManager = userManager;

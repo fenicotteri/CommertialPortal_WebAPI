@@ -9,10 +9,10 @@ namespace CommertialPortal_WebAPI.Features.Users.RegisterClient;
 
 public class RegisterClientCommandHandler : IRequestHandler<RegisterClientCommand, Result<RegisterClientResponse>>
 {
-    private readonly ITokenServise _tokenServise;
+    private readonly ITokenService _tokenServise;
     private readonly UserManager<User> _userManager;
 
-    public RegisterClientCommandHandler(UserManager<User> userManager, ITokenServise tokenServise)
+    public RegisterClientCommandHandler(UserManager<User> userManager, ITokenService tokenServise)
     {
         _userManager = userManager;
         _tokenServise = tokenServise;
