@@ -4,4 +4,4 @@ using MediatR;
 
 namespace CommertialPortal_WebAPI.Features.Users.RegisterClient;
 
-public record RegisterClientCommand(string Email, string Password, string FirstName, string LastName) : IRequest<Result<RegisterClientResponse>>;
+public record RegisterClientCommand(string Email, string Password, string UserName, string FirstName, string LastName) : IRequest<Result<RegisterClientResponse>>;

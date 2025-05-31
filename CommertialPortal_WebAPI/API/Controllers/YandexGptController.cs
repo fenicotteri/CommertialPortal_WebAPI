@@ -23,7 +23,7 @@ public class YandexGptController : ControllerBase
     [ProducesResponseType(typeof(YandexGptResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> Ask([FromBody] YandexGptRequest request)
     {
-        var reply = await _gpt.AskAsync(request.Prompt);
+        var reply = await _gpt.AskAsync(request.Prompt, "Напиши красивый текст описание для публикации");
         return Ok(new YandexGptResponse(reply));
     }
 }

@@ -1,3 +1,3 @@
 ﻿namespace CommertialPortal_WebAPI.Features.Users.RegisterBusiness;
 
-public record RegisterBusinessResponse(string token);
+public record RegisterBusinessResponse(string accessToken);

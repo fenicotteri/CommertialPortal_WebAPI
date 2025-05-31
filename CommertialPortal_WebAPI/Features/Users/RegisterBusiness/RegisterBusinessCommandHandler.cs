@@ -23,7 +23,7 @@ public class RegisterUserHandler : IRequestHandler<RegisterBusinessCommand, Resu
         if (userExists is not null) 
             return Result.Failure<RegisterBusinessResponse>(DomainErrors.User.EmailAlreadyInUse);
 
-        var userResult = User.Create(request.Email);
+        var userResult = User.Create(request.Email, request.Email);
         if (userResult.IsFailure)
             return Result.Failure<RegisterBusinessResponse>(userResult.Error);
 

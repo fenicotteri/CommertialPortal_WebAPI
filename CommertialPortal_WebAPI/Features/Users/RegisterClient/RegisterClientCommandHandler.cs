@@ -24,7 +24,7 @@ public class RegisterClientCommandHandler : IRequestHandler<RegisterClientComman
         if (userExists is not null)
             return Result.Failure<RegisterClientResponse>(DomainErrors.User.EmailAlreadyInUse);
 
-        var userResult = User.Create(request.Email);
+        var userResult = User.Create(request.Email, request.UserName);
         if (userResult.IsFailure)
             return Result.Failure<RegisterClientResponse>(userResult.Error);
 

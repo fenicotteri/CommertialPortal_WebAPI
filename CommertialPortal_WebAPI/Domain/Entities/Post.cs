@@ -14,11 +14,12 @@ public class Post
     public DateTime? EndDate { get; set; }
     public DateTime CreatedAt { get; set; }
 
-    public int? BusinessProfileId { get; set; }
+    public int BusinessProfileId { get; set; }
     public BusinessProfile BusinessProfile { get; set; } = null!;
     public List<PostBusinessBranch> PostBranches { get; set; } = new();
 
     public DiscountInfo? Discount { get; set; }
+    public PostAnalitics Analitics { get; set; } = new PostAnalitics();
 
     public static Post Create(
         string title,

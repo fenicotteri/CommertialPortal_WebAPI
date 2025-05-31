@@ -7,7 +7,7 @@ public class ClientProfile
     public int Id { get; set; }
     public required string UserId { get; set; }
     public User User { get; set; } = null!;
-
+    
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public ICollection<Post> FavouritePosts { get; set; } = new List<Post>();

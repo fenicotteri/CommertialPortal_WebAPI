@@ -21,23 +21,39 @@ public class RemoveFavouritePostCommandHandler : IRequestHandler<RemoveFavourite
     public async Task<Result> Handle(RemoveFavouritePostCommand request, CancellationToken cancellationToken)
     {
         var email = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
+        if (string.IsNullOrEmpty(email))
+            return Result.Failure("User email not found.");
 
-        var user = await _context.Users.Where(x => x.Email == email).Include(x => x.ClientProfile).FirstOrDefaultAsync();
+        var user = await _context.Users
+            .Where(x => x.Email == email)
+            .Include(x => x.ClientProfile)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (user is null || user.ClientProfile is null)
-            throw new Exception("Client profile not found.");
+            return Result.Failure("Client profile not found.");
 
-        var post = user.ClientProfile.FavouritePosts.FirstOrDefault(p => p.Id == request.PostId);
 
-        if (post is not null)
-        {
-            user.ClientProfile.FavouritePosts.Remove(post);
-            await _context.SaveChangesAsync(cancellationToken);
-        }
+        var post = await _context.Posts
+           .Where(x => x.Id == request.PostId)
+           .Include(x => x.Analitics)
+           .FirstOrDefaultAsync(cancellationToken);
+
+        if (post is null)
+            return Result.Failure("This post is not favourite.");
+
+        bool isSubscribed = await _context.ClientSubscriptions
+                .AnyAsync(cs =>
+                    cs.ClientProfileId == user.ClientProfile.Id &&
+                    cs.BusinessProfileId == post.BusinessProfileId,
+                    cancellationToken);
+
+        if (isSubscribed)
+            post.Analitics.SubscriberLikes--;
         else
-        {
-            return Result.Failure("This post is not favourite");
-        }
+            post.Analitics.GuestLikes--;
+
+        user.ClientProfile.FavouritePosts.Remove(post);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

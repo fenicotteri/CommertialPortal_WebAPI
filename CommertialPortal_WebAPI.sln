@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35828.75 d17.13
+VisualStudioVersion = 17.13.35828.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommertialPortal_WebAPI", "CommertialPortal_WebAPI\CommertialPortal_WebAPI.csproj", "{241B9BA3-E594-42A7-9BB6-F68E6CD60EAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCommertialPortal", "TestCommertialPortal\TestCommertialPortal.csproj", "{0DDE6966-49B3-4670-BC8F-87B2AF5BDEE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{241B9BA3-E594-42A7-9BB6-F68E6CD60EAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{241B9BA3-E594-42A7-9BB6-F68E6CD60EAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{241B9BA3-E594-42A7-9BB6-F68E6CD60EAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DDE6966-49B3-4670-BC8F-87B2AF5BDEE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DDE6966-49B3-4670-BC8F-87B2AF5BDEE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DDE6966-49B3-4670-BC8F-87B2AF5BDEE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DDE6966-49B3-4670-BC8F-87B2AF5BDEE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

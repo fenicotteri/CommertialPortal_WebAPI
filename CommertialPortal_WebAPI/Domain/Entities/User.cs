@@ -8,14 +8,14 @@ public class User : IdentityUser
     public BusinessProfile? BusinessProfile { get; set; }
     public ClientProfile? ClientProfile { get; set; }
 
-    public UserType? UserType { get; private set; }
+    public UserType? UserType { get; set; }
 
-    public static Result<User> Create(string email)
+    public static Result<User> Create(string email, string userName)
     {
         return Result.Success(new User
         {
-            Email = email,
-            UserName = email,
+            UserName = userName,
+            Email = email
         });
     }
 

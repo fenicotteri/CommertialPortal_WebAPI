@@ -55,6 +55,7 @@ public sealed class CreatePostCommandHandler : IRequestHandler<CreatePostCommand
             discount: discount
         );
 
+        post.BusinessProfile = businessProfile;
         _dbContext.Posts.Add(post);
         await _dbContext.SaveChangesAsync(cancellationToken);
 

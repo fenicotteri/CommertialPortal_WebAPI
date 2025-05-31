@@ -16,10 +16,17 @@ public class DataContext : IdentityDbContext<User>
     public DbSet<ClientProfile> ClientProfiles { get; set; }
     public DbSet<BusinessProfile> BusinessProfiles { get; set; }
     public DbSet<ClientSubscription> ClientSubscriptions { get; set; }
+    public DbSet<PostAnalitics> PostAnalitics { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<Post>(entity =>
+        {
+            entity.Property(p => p.Type)
+                  .HasConversion<string>(); 
+        });
 
         builder.Entity<BusinessProfile>()
            .HasOne(bp => bp.User)
@@ -77,7 +84,12 @@ public class DataContext : IdentityDbContext<User>
 
             entity.HasIndex(cs => new { cs.ClientProfileId, cs.BusinessProfileId }).IsUnique();
         });
-        
+
+        builder.Entity<Post>()
+            .HasOne(p => p.Analitics)
+            .WithOne()
+            .HasForeignKey<PostAnalitics>(pa => pa.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 

@@ -7,13 +7,13 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using CommertialPortal_WebAPI.Domain.Entities;
 using CommertialPortal_WebAPI.Application.Interfaces;
 using CommertialPortal_WebAPI.Infrastructure.Data;
 using CommertialPortal_WebAPI.Infrastructure.Servises;
 using Microsoft.Extensions.Options;
 using CommertialPortal_WebAPI;
 using CommertialPortal_WebAPI.Features.YandexGpt;
+using CommertialPortal_WebAPI.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -120,8 +120,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors(x => x
+         .AllowAnyMethod()
+         .AllowAnyHeader()
+         .AllowCredentials()
+         // .WithOrigins("https://localhost:5432")
+         .SetIsOriginAllowed(origin => true));
+
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+public partial class Program { }

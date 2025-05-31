@@ -3,6 +3,7 @@ using System;
 using CommertialPortal_WebAPI.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CommertialPortal_WebAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250426071310_type")]
+    partial class type
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,40 +209,6 @@ namespace CommertialPortal_WebAPI.Migrations
                     b.HasIndex("DiscountId");
 
                     b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("CommertialPortal_WebAPI.Domain.Entities.PostAnalitics", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("GuestLikes")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("GuestViews")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("PromosCopied")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SubscriberLikes")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("SubscriberViews")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId")
-                        .IsUnique();
-
-                    b.ToTable("PostAnalitics");
                 });
 
             modelBuilder.Entity("CommertialPortal_WebAPI.Domain.Entities.PostBusinessBranch", b =>
@@ -540,15 +509,6 @@ namespace CommertialPortal_WebAPI.Migrations
                     b.Navigation("Discount");
                 });
 
-            modelBuilder.Entity("CommertialPortal_WebAPI.Domain.Entities.PostAnalitics", b =>
-                {
-                    b.HasOne("CommertialPortal_WebAPI.Domain.Entities.Post", null)
-                        .WithOne("Analitics")
-                        .HasForeignKey("CommertialPortal_WebAPI.Domain.Entities.PostAnalitics", "PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("CommertialPortal_WebAPI.Domain.Entities.PostBusinessBranch", b =>
                 {
                     b.HasOne("CommertialPortal_WebAPI.Domain.Entities.BusinessBranch", "BusinessBranch")
@@ -638,9 +598,6 @@ namespace CommertialPortal_WebAPI.Migrations
 
             modelBuilder.Entity("CommertialPortal_WebAPI.Domain.Entities.Post", b =>
                 {
-                    b.Navigation("Analitics")
-                        .IsRequired();
-
                     b.Navigation("PostBranches");
                 });
 

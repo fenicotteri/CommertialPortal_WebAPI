@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 
 public interface IYandexGptService
 {
-    Task<string> AskAsync(string prompt, CancellationToken cancellationToken = default);
+    Task<string> AskAsync(string prompt, string question, CancellationToken cancellationToken = default);
 }
 
 public class YandexGptService : IYandexGptService
@@ -21,7 +21,7 @@ public class YandexGptService : IYandexGptService
         _config = config;
     }
 
-    public async Task<string> AskAsync(string prompt, CancellationToken cancellationToken = default)
+    public async Task<string> AskAsync(string prompt, string question, CancellationToken cancellationToken = default)
     {
         var apiKey = _config["YandexGpt:ApiKey"];
         var folderId = _config["YandexGpt:FolderId"]; 
@@ -38,7 +38,7 @@ public class YandexGptService : IYandexGptService
             },
             messages = new[]
             {
-                new {role = "system", text = "Напиши красивый текст описание для публикации"},
+                new {role = "system", text = question},
                 new { role = "user", text = prompt }
             }
         };

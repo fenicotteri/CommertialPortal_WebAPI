@@ -1,4 +1,6 @@
 ﻿using System.Security.Claims;
+using CommertialPortal_WebAPI.Features.Auth.GetMe;
+using CommertialPortal_WebAPI.Features.Users.GetMeUser;
 using CommertialPortal_WebAPI.Features.Users.LoginUser;
 using CommertialPortal_WebAPI.Features.Users.RegisterBusiness;
 using CommertialPortal_WebAPI.Features.Users.RegisterClient;
@@ -67,14 +69,12 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public IActionResult CheckToken()
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
         var roles = User.FindAll(ClaimTypes.Role).Select(r => r.Value).ToList();
 
         return Ok(new
         {
             Message = "Token is valid",
-            UserId = userId,
             Email = email,
             Roles = roles
         });
@@ -117,6 +117,14 @@ public class UsersController : ControllerBase
             return BadRequest(ApiResponse<string>.FailureResponse(result.Error));
 
         return Ok(ApiResponse<string>.SuccessResponse("Successfully subscribed."));
+    }
+
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<ActionResult<GetMeDto>> GetMe()
+    {
+        var user = await _mediator.Send(new GetMeQuery());
+        return Ok(user);
     }
 
 }

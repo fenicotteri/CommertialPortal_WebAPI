@@ -1,4 +1,5 @@
-﻿using CommertialPortal_WebAPI.Infrastructure.Data;
+﻿using CommertialPortal_WebAPI.Domain.Entities;
+using CommertialPortal_WebAPI.Infrastructure.Data;
 using CSharpFunctionalExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -21,26 +22,46 @@ public class AddFavouritePostCommandHandler : IRequestHandler<AddFavouritePostCo
     public async Task<Result> Handle(AddFavouritePostCommand request, CancellationToken cancellationToken)
     {
         var email = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
+        if (string.IsNullOrEmpty(email))
+            return Result.Failure("User email not found.");
 
-        var user = await _context.Users.Where(x => x.Email == email).Include(x => x.ClientProfile).FirstOrDefaultAsync();
+        var user = await _context.Users
+            .Where(x => x.Email == email)
+            .Include(x => x.ClientProfile)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (user is null || user.ClientProfile is null)
-            throw new Exception("Client profile not found.");
+            return Result.Failure("Client profile not found.");
 
-        var post = await _context.Posts.Where(x => x.Id == request.PostId).FirstOrDefaultAsync();
+        var post = await _context.Posts
+            .Where(x => x.Id == request.PostId)
+            .Include(x => x.Analitics)
+            .FirstOrDefaultAsync(cancellationToken);
 
         if (post is null)
-            throw new Exception("Post not found.");
+            return Result.Failure("Post not found.");
 
-        if (!user.ClientProfile.FavouritePosts.Any(p => p.Id == post.Id))
-        {
-            user.ClientProfile.FavouritePosts.Add(post);
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        else
-        {
-            return Result.Failure("This post is already favourite");
-        }
+        bool isAlreadyFavourite = await _context.Entry(user.ClientProfile)
+            .Collection(cp => cp.FavouritePosts)
+            .Query()
+            .AnyAsync(p => p.Id == post.Id, cancellationToken);
+
+        if (isAlreadyFavourite)
+            return Result.Failure("This post is already favourite.");
+
+        user.ClientProfile.FavouritePosts.Add(post);
+
+        bool isSubscribed = await _context.ClientSubscriptions
+            .AnyAsync(cs =>
+            cs.ClientProfileId == user.ClientProfile.Id &&
+            cs.BusinessProfileId == post.BusinessProfileId,
+            cancellationToken);
+
+        if (isSubscribed)
+            post.Analitics.SubscriberLikes++;
+        else post.Analitics.GuestLikes++;
+
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
     }

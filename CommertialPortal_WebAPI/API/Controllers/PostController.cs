@@ -1,8 +1,16 @@
 ﻿using System.Security.Claims;
+using CommertialPortal_WebAPI.Domain.Entities;
 using CommertialPortal_WebAPI.Features.Posts.AddFavouritePost;
 using CommertialPortal_WebAPI.Features.Posts.CreateBranch;
 using CommertialPortal_WebAPI.Features.Posts.CreatePost;
+using CommertialPortal_WebAPI.Features.Posts.GetBranches;
+using CommertialPortal_WebAPI.Features.Posts.GetBranchesByBusinessId;
+using CommertialPortal_WebAPI.Features.Posts.GetFavouritePosts;
+using CommertialPortal_WebAPI.Features.Posts.GetPostById;
+using CommertialPortal_WebAPI.Features.Posts.GetPosts;
 using CommertialPortal_WebAPI.Features.Posts.RemoveFavouritePost;
+using CommertialPortal_WebAPI.Features.Users.GetBusinessById;
+using CommertialPortal_WebAPI.Features.Users.GetBusinesses;
 using CommertialPortal_WebAPI.Features.Users.RegisterBusiness;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -19,32 +27,8 @@ public class PostController : ControllerBase
     public PostController(IMediator mediator) => _mediator = mediator;
 
     /// <summary>
-    /// Создание нового филиала для бизнеса.
-    /// </summary>
-    /// <param name="request">Данные филиала.</param>
-    /// <returns>Идентификатор созданного филиала.</returns>
-    [HttpPost("branch")]
-    [Authorize(Roles = AuthRoles.Business)]
-    [ProducesResponseType(typeof(ApiResponse<int>), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ApiResponse<string>), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> CreateBranch([FromBody] CreateBrunchRequest request)
-    {
-        var email = User.FindFirst(ClaimTypes.Email)?.Value;
-        if (email is null)
-            return Unauthorized(ApiResponse<string>.FailureResponse("User email not found."));
-
-        var result = await _mediator.Send(new CreateBranchCommand(email, request));
-        if (result.IsFailure)
-            return BadRequest(ApiResponse<string>.FailureResponse(result.Error));
-
-        return Ok(ApiResponse<int>.SuccessResponse(result.Value));
-    }
-
-    /// <summary>
     /// Создание нового поста (акция, событие, скидка).
     /// </summary>
-    /// <param name="command">Данные поста.</param>
     /// <returns>Идентификатор созданного поста.</returns>
     [HttpPost("create")]
     [Authorize(Roles = AuthRoles.Business)]
@@ -56,6 +40,22 @@ public class PostController : ControllerBase
         var result = await _mediator.Send(command);
         return Ok(ApiResponse<int>.SuccessResponse(result));
     }
+
+    /// <summary>
+    /// Создание нового поста (акция, событие, скидка).
+    /// </summary>
+    /// <returns>Идентификатор созданного поста.</returns>
+    [HttpGet("favourites")]
+    [Authorize(Roles = AuthRoles.Client)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse<List<int>>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetFavourites()
+    {
+        var posts = await _mediator.Send(new GetFavouritePostsQuerry());
+        return Ok(posts);
+    }
+
 
     /// <summary>
     /// Добавить пост в избранные.
@@ -88,4 +88,29 @@ public class PostController : ControllerBase
         await _mediator.Send(new RemoveFavouritePostCommand(postId));
         return NoContent();
     }
+
+    /// <summary>
+    /// Получение всех постов.
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(typeof(List<PostDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllPosts()
+    {
+        var posts = await _mediator.Send(new GetPostsQuery());
+        return Ok(posts);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PostDto>> GetPostById(int id)
+    {
+        var post = await _mediator.Send(new GetPostByIdQuery(id));
+
+        if (post == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(post);
+    }
+
 }
